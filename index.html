@@ -1,1 +1,319 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NEON MIXER // Terminal Audio Lab</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="bgGrid"></div>
+  <header class="topbar">
+    <div class="brand">
+      <span class="dot"></span>
+      <div class="title">
+        <div class="h1">NEON MIXER</div>
+        <div class="sub">terminal audio lab · web audio engine</div>
+      </div>
+    </div>
 
+    <div class="topActions">
+      <button class="btn ghost" id="btnAudio">Start Audio</button>
+      <button class="btn ghost" id="btnReset">Reset</button>
+      <button class="btn" id="btnRecord">● Record</button>
+      <a class="btn ghost" id="btnDownload" download="neon-mix.webm" href="#" aria-disabled="true">Download</a>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="panel">
+      <nav class="tabs">
+        <button class="tab active" data-tab="mix">Mix</button>
+        <button class="tab" data-tab="eq">EQ</button>
+        <button class="tab" data-tab="fx">FX</button>
+        <button class="tab" data-tab="master">Master</button>
+        <button class="tab" data-tab="about">About</button>
+        <div class="tabLine"></div>
+      </nav>
+
+      <div class="tabStage">
+        <!-- MIX TAB -->
+        <div class="tabPage show" id="tab-mix">
+          <div class="grid2">
+            <section class="card">
+              <div class="cardHead">
+                <div class="cardTitle">Deck A</div>
+                <div class="pill">A</div>
+              </div>
+
+              <div class="row">
+                <input type="file" id="fileA" accept="audio/*" class="file" />
+                <button class="btn" id="playA">Play</button>
+                <button class="btn ghost" id="pauseA">Pause</button>
+                <button class="btn ghost" id="stopA">Stop</button>
+              </div>
+
+              <div class="meterRow">
+                <div class="meterWrap">
+                  <div class="meterLabel">Level</div>
+                  <div class="meter"><div class="meterFill" id="meterA"></div></div>
+                </div>
+                <div class="time" id="timeA">00:00 / 00:00</div>
+              </div>
+
+              <div class="sliders">
+                <label class="s">
+                  <span>Gain</span>
+                  <input id="gainA" type="range" min="0" max="2" value="1" step="0.01"/>
+                  <span class="v" id="gainAVal">1.00</span>
+                </label>
+                <label class="s">
+                  <span>Pan</span>
+                  <input id="panA" type="range" min="-1" max="1" value="0" step="0.01"/>
+                  <span class="v" id="panAVal">0.00</span>
+                </label>
+                <label class="s">
+                  <span>Speed</span>
+                  <input id="rateA" type="range" min="0.5" max="2" value="1" step="0.01"/>
+                  <span class="v" id="rateAVal">1.00</span>
+                </label>
+              </div>
+            </section>
+
+            <section class="card">
+              <div class="cardHead">
+                <div class="cardTitle">Deck B</div>
+                <div class="pill">B</div>
+              </div>
+
+              <div class="row">
+                <input type="file" id="fileB" accept="audio/*" class="file" />
+                <button class="btn" id="playB">Play</button>
+                <button class="btn ghost" id="pauseB">Pause</button>
+                <button class="btn ghost" id="stopB">Stop</button>
+              </div>
+
+              <div class="meterRow">
+                <div class="meterWrap">
+                  <div class="meterLabel">Level</div>
+                  <div class="meter"><div class="meterFill" id="meterB"></div></div>
+                </div>
+                <div class="time" id="timeB">00:00 / 00:00</div>
+              </div>
+
+              <div class="sliders">
+                <label class="s">
+                  <span>Gain</span>
+                  <input id="gainB" type="range" min="0" max="2" value="1" step="0.01"/>
+                  <span class="v" id="gainBVal">1.00</span>
+                </label>
+                <label class="s">
+                  <span>Pan</span>
+                  <input id="panB" type="range" min="-1" max="1" value="0" step="0.01"/>
+                  <span class="v" id="panBVal">0.00</span>
+                </label>
+                <label class="s">
+                  <span>Speed</span>
+                  <input id="rateB" type="range" min="0.5" max="2" value="1" step="0.01"/>
+                  <span class="v" id="rateBVal">1.00</span>
+                </label>
+              </div>
+            </section>
+          </div>
+
+          <section class="card">
+            <div class="cardHead">
+              <div class="cardTitle">Crossfader</div>
+              <div class="hint">Blend A ↔ B (equal-power curve)</div>
+            </div>
+
+            <div class="xfade">
+              <div class="xfadeLabel">A</div>
+              <input id="xfader" type="range" min="0" max="1" value="0.5" step="0.001" />
+              <div class="xfadeLabel">B</div>
+              <div class="xfadeVal" id="xfVal">0.50</div>
+            </div>
+          </section>
+        </div>
+
+        <!-- EQ TAB -->
+        <div class="tabPage" id="tab-eq">
+          <section class="card">
+            <div class="cardHead">
+              <div class="cardTitle">10-Band Graphic EQ</div>
+              <div class="hint">Applies to both decks (Master EQ)</div>
+            </div>
+
+            <div class="eq10" id="eq10"></div>
+            <div class="miniRow">
+              <button class="btn ghost" id="eqFlat">Flat</button>
+              <button class="btn ghost" id="eqSmile">Smile</button>
+              <button class="btn ghost" id="eqBass">Bass+</button>
+              <button class="btn ghost" id="eqVocal">Vocal+</button>
+            </div>
+          </section>
+
+          <section class="card">
+            <div class="cardHead">
+              <div class="cardTitle">Parametric EQ (3 Bands)</div>
+              <div class="hint">Freq / Gain / Q</div>
+            </div>
+
+            <div class="peq">
+              <div class="peqBand" data-band="1">
+                <div class="peqTitle">Band 1</div>
+                <div class="peqGrid">
+                  <label class="s"><span>Freq</span><input id="p1Freq" type="range" min="20" max="20000" value="120" step="1"><span class="v" id="p1FreqVal">120Hz</span></label>
+                  <label class="s"><span>Gain</span><input id="p1Gain" type="range" min="-24" max="24" value="0" step="0.1"><span class="v" id="p1GainVal">0.0dB</span></label>
+                  <label class="s"><span>Q</span><input id="p1Q" type="range" min="0.1" max="18" value="1" step="0.1"><span class="v" id="p1QVal">1.0</span></label>
+                </div>
+              </div>
+
+              <div class="peqBand" data-band="2">
+                <div class="peqTitle">Band 2</div>
+                <div class="peqGrid">
+                  <label class="s"><span>Freq</span><input id="p2Freq" type="range" min="20" max="20000" value="1200" step="1"><span class="v" id="p2FreqVal">1200Hz</span></label>
+                  <label class="s"><span>Gain</span><input id="p2Gain" type="range" min="-24" max="24" value="0" step="0.1"><span class="v" id="p2GainVal">0.0dB</span></label>
+                  <label class="s"><span>Q</span><input id="p2Q" type="range" min="0.1" max="18" value="1" step="0.1"><span class="v" id="p2QVal">1.0</span></label>
+                </div>
+              </div>
+
+              <div class="peqBand" data-band="3">
+                <div class="peqTitle">Band 3</div>
+                <div class="peqGrid">
+                  <label class="s"><span>Freq</span><input id="p3Freq" type="range" min="20" max="20000" value="8000" step="1"><span class="v" id="p3FreqVal">8000Hz</span></label>
+                  <label class="s"><span>Gain</span><input id="p3Gain" type="range" min="-24" max="24" value="0" step="0.1"><span class="v" id="p3GainVal">0.0dB</span></label>
+                  <label class="s"><span>Q</span><input id="p3Q" type="range" min="0.1" max="18" value="1" step="0.1"><span class="v" id="p3QVal">1.0</span></label>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- FX TAB -->
+        <div class="tabPage" id="tab-fx">
+          <div class="grid2">
+            <section class="card">
+              <div class="cardHead">
+                <div class="cardTitle">Filters / Bass</div>
+                <div class="hint">Master chain</div>
+              </div>
+              <div class="sliders">
+                <label class="s"><span>Low Cut (HPF)</span><input id="hpf" type="range" min="20" max="1000" value="20" step="1"><span class="v" id="hpfVal">20Hz</span></label>
+                <label class="s"><span>High Cut (LPF)</span><input id="lpf" type="range" min="1000" max="20000" value="20000" step="1"><span class="v" id="lpfVal">20000Hz</span></label>
+                <label class="s"><span>Bass Boost</span><input id="bass" type="range" min="0" max="18" value="0" step="0.1"><span class="v" id="bassVal">0.0dB</span></label>
+              </div>
+            </section>
+
+            <section class="card">
+              <div class="cardHead">
+                <div class="cardTitle">Delay / Reverb</div>
+                <div class="hint">Wet/Dry</div>
+              </div>
+              <div class="sliders">
+                <label class="s"><span>Delay Time</span><input id="delayTime" type="range" min="0" max="1.2" value="0" step="0.001"><span class="v" id="delayTimeVal">0.000s</span></label>
+                <label class="s"><span>Delay Feedback</span><input id="delayFb" type="range" min="0" max="0.95" value="0" step="0.001"><span class="v" id="delayFbVal">0.000</span></label>
+                <label class="s"><span>Delay Mix</span><input id="delayMix" type="range" min="0" max="1" value="0" step="0.001"><span class="v" id="delayMixVal">0.000</span></label>
+
+                <div class="divider"></div>
+
+                <label class="s"><span>Reverb Size</span><input id="revSize" type="range" min="0.1" max="6" value="2.2" step="0.1"><span class="v" id="revSizeVal">2.2s</span></label>
+                <label class="s"><span>Reverb Mix</span><input id="revMix" type="range" min="0" max="1" value="0" step="0.001"><span class="v" id="revMixVal">0.000</span></label>
+              </div>
+            </section>
+          </div>
+
+          <section class="card">
+            <div class="cardHead">
+              <div class="cardTitle">Stereo / Color</div>
+              <div class="hint">Width + gentle saturation</div>
+            </div>
+            <div class="grid2">
+              <div class="sliders">
+                <label class="s"><span>Stereo Width</span><input id="width" type="range" min="0" max="2" value="1" step="0.01"><span class="v" id="widthVal">1.00</span></label>
+                <label class="s"><span>Saturation</span><input id="sat" type="range" min="0" max="1" value="0" step="0.001"><span class="v" id="satVal">0.000</span></label>
+              </div>
+              <div class="hintBox">
+                <div class="hintTitle">Tip</div>
+                <div class="hintText">Keep saturation low to avoid clipping. Limiter will catch peaks, but clean mixes sound best.</div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- MASTER TAB -->
+        <div class="tabPage" id="tab-master">
+          <div class="grid2">
+            <section class="card">
+              <div class="cardHead">
+                <div class="cardTitle">Compressor</div>
+                <div class="hint">Tames dynamics</div>
+              </div>
+              <div class="sliders">
+                <label class="s"><span>Threshold</span><input id="compThresh" type="range" min="-60" max="0" value="-18" step="0.1"><span class="v" id="compThreshVal">-18.0dB</span></label>
+                <label class="s"><span>Ratio</span><input id="compRatio" type="range" min="1" max="20" value="4" step="0.1"><span class="v" id="compRatioVal">4.0:1</span></label>
+                <label class="s"><span>Attack</span><input id="compAtk" type="range" min="0" max="1" value="0.01" step="0.001"><span class="v" id="compAtkVal">0.010s</span></label>
+                <label class="s"><span>Release</span><input id="compRel" type="range" min="0.02" max="1.5" value="0.25" step="0.001"><span class="v" id="compRelVal">0.250s</span></label>
+                <label class="s"><span>Makeup Gain</span><input id="makeup" type="range" min="0" max="12" value="0" step="0.1"><span class="v" id="makeupVal">0.0dB</span></label>
+              </div>
+            </section>
+
+            <section class="card">
+              <div class="cardHead">
+                <div class="cardTitle">Limiter</div>
+                <div class="hint">Hard ceiling + safe output</div>
+              </div>
+              <div class="sliders">
+                <label class="s"><span>Ceiling</span><input id="ceil" type="range" min="-12" max="0" value="-1" step="0.1"><span class="v" id="ceilVal">-1.0dB</span></label>
+                <label class="s"><span>Drive Into Limiter</span><input id="limDrive" type="range" min="0" max="18" value="0" step="0.1"><span class="v" id="limDriveVal">0.0dB</span></label>
+                <div class="divider"></div>
+                <label class="s"><span>Master Output</span><input id="master" type="range" min="0" max="2" value="1" step="0.01"><span class="v" id="masterVal">1.00</span></label>
+              </div>
+            </section>
+          </div>
+
+          <section class="card">
+            <div class="cardHead">
+              <div class="cardTitle">Master Meter</div>
+              <div class="hint">Realtime output level</div>
+            </div>
+            <div class="meterBig">
+              <div class="meter"><div class="meterFill" id="meterM"></div></div>
+              <div class="time" id="dbM">-∞ dB</div>
+            </div>
+          </section>
+        </div>
+
+        <!-- ABOUT TAB -->
+        <div class="tabPage" id="tab-about">
+          <section class="card">
+            <div class="cardHead">
+              <div class="cardTitle">How it works</div>
+              <div class="hint">Local files only · no uploads</div>
+            </div>
+            <div class="about">
+              <p>
+                This is a Web Audio mixer: two decks feeding a master chain (EQ → FX → Comp → Limiter → Output).
+                Everything runs in your browser. Load songs from your device and mix.
+              </p>
+              <ul>
+                <li><b>Start Audio</b> is required because browsers block audio until user interaction.</li>
+                <li><b>Record</b> captures the master output and lets you download the file.</li>
+                <li>For best results: keep levels below clipping and use limiter gently.</li>
+              </ul>
+              <div class="hint small">If you want next upgrades: waveform display, cue points, BPM detect, and exporting WAV.</div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <footer class="foot">
+      <div class="footLeft">status: <span id="status">idle</span></div>
+      <div class="footRight">made for GitHub Pages · neon terminal UI</div>
+    </footer>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
